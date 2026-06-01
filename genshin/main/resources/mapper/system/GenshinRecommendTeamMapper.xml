@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.GenshinRecommendTeamMapper">
+    
+    <resultMap type="GenshinRecommendTeam" id="GenshinRecommendTeamResult">
+        <result property="id"    column="id"    />
+        <result property="teamName"    column="team_name"    />
+        <result property="char1Id"    column="char1_id"    />
+        <result property="char2Id"    column="char2_id"    />
+        <result property="char3Id"    column="char3_id"    />
+        <result property="char4Id"    column="char4_id"    />
+        <result property="teamBonus"    column="team_bonus"    />
+        <result property="rotation"    column="rotation"    />
+    </resultMap>
+
+    <sql id="selectGenshinRecommendTeamVo">
+        select id, team_name, char1_id, char2_id, char3_id, char4_id, team_bonus, rotation from genshin_recommend_team
+    </sql>
+
+    <select id="selectGenshinRecommendTeamList" parameterType="GenshinRecommendTeam" resultMap="GenshinRecommendTeamResult">
+        <include refid="selectGenshinRecommendTeamVo"/>
+        <where>  
+            <if test="teamName != null  and teamName != ''"> and team_name like concat('%', #{teamName}, '%')</if>
+            <if test="char1Id != null "> and char1_id = #{char1Id}</if>
+            <if test="char2Id != null "> and char2_id = #{char2Id}</if>
+            <if test="char3Id != null "> and char3_id = #{char3Id}</if>
+            <if test="char4Id != null "> and char4_id = #{char4Id}</if>
+            <if test="teamBonus != null  and teamBonus != ''"> and team_bonus = #{teamBonus}</if>
+            <if test="rotation != null  and rotation != ''"> and rotation = #{rotation}</if>
+        </where>
+    </select>
+    
+    <select id="selectGenshinRecommendTeamById" parameterType="Long" resultMap="GenshinRecommendTeamResult">
+        <include refid="selectGenshinRecommendTeamVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertGenshinRecommendTeam" parameterType="GenshinRecommendTeam" useGeneratedKeys="true" keyProperty="id">
+        insert into genshin_recommend_team
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teamName != null and teamName != ''">team_name,</if>
+            <if test="char1Id != null">char1_id,</if>
+            <if test="char2Id != null">char2_id,</if>
+            <if test="char3Id != null">char3_id,</if>
+            <if test="char4Id != null">char4_id,</if>
+            <if test="teamBonus != null">team_bonus,</if>
+            <if test="rotation != null">rotation,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="teamName != null and teamName != ''">#{teamName},</if>
+            <if test="char1Id != null">#{char1Id},</if>
+            <if test="char2Id != null">#{char2Id},</if>
+            <if test="char3Id != null">#{char3Id},</if>
+            <if test="char4Id != null">#{char4Id},</if>
+            <if test="teamBonus != null">#{teamBonus},</if>
+            <if test="rotation != null">#{rotation},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGenshinRecommendTeam" parameterType="GenshinRecommendTeam">
+        update genshin_recommend_team
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="teamName != null and teamName != ''">team_name = #{teamName},</if>
+            <if test="char1Id != null">char1_id = #{char1Id},</if>
+            <if test="char2Id != null">char2_id = #{char2Id},</if>
+            <if test="char3Id != null">char3_id = #{char3Id},</if>
+            <if test="char4Id != null">char4_id = #{char4Id},</if>
+            <if test="teamBonus != null">team_bonus = #{teamBonus},</if>
+            <if test="rotation != null">rotation = #{rotation},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGenshinRecommendTeamById" parameterType="Long">
+        delete from genshin_recommend_team where id = #{id}
+    </delete>
+
+    <delete id="deleteGenshinRecommendTeamByIds" parameterType="String">
+        delete from genshin_recommend_team where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

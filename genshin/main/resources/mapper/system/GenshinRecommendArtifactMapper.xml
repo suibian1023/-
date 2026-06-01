@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.GenshinRecommendArtifactMapper">
+    
+    <resultMap type="GenshinRecommendArtifact" id="GenshinRecommendArtifactResult">
+        <result property="id"    column="id"    />
+        <result property="characterId"    column="character_id"    />
+        <result property="artifactId"    column="artifact_id"    />
+        <result property="pieces"    column="pieces"    />
+        <result property="sandStat"    column="sand_stat"    />
+        <result property="cupStat"    column="cup_stat"    />
+        <result property="crownStat"    column="crown_stat"    />
+        <result property="subStats"    column="sub_stats"    />
+    </resultMap>
+
+    <sql id="selectGenshinRecommendArtifactVo">
+        select id, character_id, artifact_id, pieces, sand_stat, cup_stat, crown_stat, sub_stats from genshin_recommend_artifact
+    </sql>
+
+    <select id="selectGenshinRecommendArtifactList" parameterType="GenshinRecommendArtifact" resultMap="GenshinRecommendArtifactResult">
+        <include refid="selectGenshinRecommendArtifactVo"/>
+        <where>  
+            <if test="characterId != null "> and character_id = #{characterId}</if>
+            <if test="artifactId != null "> and artifact_id = #{artifactId}</if>
+            <if test="pieces != null "> and pieces = #{pieces}</if>
+            <if test="sandStat != null  and sandStat != ''"> and sand_stat = #{sandStat}</if>
+            <if test="cupStat != null  and cupStat != ''"> and cup_stat = #{cupStat}</if>
+            <if test="crownStat != null  and crownStat != ''"> and crown_stat = #{crownStat}</if>
+            <if test="subStats != null  and subStats != ''"> and sub_stats = #{subStats}</if>
+        </where>
+    </select>
+    
+    <select id="selectGenshinRecommendArtifactById" parameterType="Long" resultMap="GenshinRecommendArtifactResult">
+        <include refid="selectGenshinRecommendArtifactVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertGenshinRecommendArtifact" parameterType="GenshinRecommendArtifact" useGeneratedKeys="true" keyProperty="id">
+        insert into genshin_recommend_artifact
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="characterId != null">character_id,</if>
+            <if test="artifactId != null">artifact_id,</if>
+            <if test="pieces != null">pieces,</if>
+            <if test="sandStat != null">sand_stat,</if>
+            <if test="cupStat != null">cup_stat,</if>
+            <if test="crownStat != null">crown_stat,</if>
+            <if test="subStats != null">sub_stats,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="characterId != null">#{characterId},</if>
+            <if test="artifactId != null">#{artifactId},</if>
+            <if test="pieces != null">#{pieces},</if>
+            <if test="sandStat != null">#{sandStat},</if>
+            <if test="cupStat != null">#{cupStat},</if>
+            <if test="crownStat != null">#{crownStat},</if>
+            <if test="subStats != null">#{subStats},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGenshinRecommendArtifact" parameterType="GenshinRecommendArtifact">
+        update genshin_recommend_artifact
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="characterId != null">character_id = #{characterId},</if>
+            <if test="artifactId != null">artifact_id = #{artifactId},</if>
+            <if test="pieces != null">pieces = #{pieces},</if>
+            <if test="sandStat != null">sand_stat = #{sandStat},</if>
+            <if test="cupStat != null">cup_stat = #{cupStat},</if>
+            <if test="crownStat != null">crown_stat = #{crownStat},</if>
+            <if test="subStats != null">sub_stats = #{subStats},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGenshinRecommendArtifactById" parameterType="Long">
+        delete from genshin_recommend_artifact where id = #{id}
+    </delete>
+
+    <delete id="deleteGenshinRecommendArtifactByIds" parameterType="String">
+        delete from genshin_recommend_artifact where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
