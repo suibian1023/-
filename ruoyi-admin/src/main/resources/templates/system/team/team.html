@@ -15,20 +15,32 @@
                                 <input type="text" name="teamName"/>
                             </li>
                             <li>
-                                <label>1号位角色ID(主C)：</label>
-                                <input type="text" name="char1Id"/>
+                                <label>1号位角色(主C)：</label>
+                                <select name="char1Id" class="form-control">
+                                    <option value="">所有</option>
+                                    <option th:each="character : ${characterList}" th:value="${character.id}" th:text="${character.name}"></option>
+                                </select>
                             </li>
                             <li>
-                                <label>2号位角色ID(副C)：</label>
-                                <input type="text" name="char2Id"/>
+                                <label>2号位角色(副C)：</label>
+                                <select name="char2Id" class="form-control">
+                                    <option value="">所有</option>
+                                    <option th:each="character : ${characterList}" th:value="${character.id}" th:text="${character.name}"></option>
+                                </select>
                             </li>
                             <li>
-                                <label>3号位角色ID(增伤/辅助)：</label>
-                                <input type="text" name="char3Id"/>
+                                <label>3号位角色(增伤/辅助)：</label>
+                                <select name="char3Id" class="form-control">
+                                    <option value="">所有</option>
+                                    <option th:each="character : ${characterList}" th:value="${character.id}" th:text="${character.name}"></option>
+                                </select>
                             </li>
                             <li>
-                                <label>4号位角色ID(生存/盾奶)：</label>
-                                <input type="text" name="char4Id"/>
+                                <label>4号位角色(生存/盾奶)：</label>
+                                <select name="char4Id" class="form-control">
+                                    <option value="">所有</option>
+                                    <option th:each="character : ${characterList}" th:value="${character.id}" th:text="${character.name}"></option>
+                                </select>
                             </li>
                             <li>
                                 <label>元素共鸣效果：</label>
@@ -67,6 +79,14 @@
         var editFlag = [[${@permission.hasPermi('system:team:edit')}]];
         var removeFlag = [[${@permission.hasPermi('system:team:remove')}]];
         var prefix = ctx + "system/team";
+        var characterList = [[${characterJson}]];
+
+        // 角色ID转名称函数
+        function getCharacterName(charId) {
+            if (!charId) return '-';
+            var char = characterList.find(c => c.id == charId);
+            return char ? char.name : '未知角色';
+        }
 
         $(function() {
             var options = {
@@ -90,19 +110,31 @@
                 },
                 {
                     field: 'char1Id',
-                    title: '1号位角色ID(主C)'
+                    title: '1号位角色(主C)',
+                    formatter: function(value, row, index) {
+                        return getCharacterName(value);
+                    }
                 },
                 {
                     field: 'char2Id',
-                    title: '2号位角色ID(副C)'
+                    title: '2号位角色(副C)',
+                    formatter: function(value, row, index) {
+                        return getCharacterName(value);
+                    }
                 },
                 {
                     field: 'char3Id',
-                    title: '3号位角色ID(增伤/辅助)'
+                    title: '3号位角色(增伤/辅助)',
+                    formatter: function(value, row, index) {
+                        return getCharacterName(value);
+                    }
                 },
                 {
                     field: 'char4Id',
-                    title: '4号位角色ID(生存/盾奶)'
+                    title: '4号位角色(生存/盾奶)',
+                    formatter: function(value, row, index) {
+                        return getCharacterName(value);
+                    }
                 },
                 {
                     field: 'teamBonus',

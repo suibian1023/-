@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.system.domain.GenshinRecommendTeam;
+import com.ruoyi.system.domain.GenshinCharacter;
 import com.ruoyi.system.service.IGenshinRecommendTeamService;
+import com.ruoyi.system.service.IGenshinCharacterService;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.poi.ExcelUtil;
@@ -34,10 +36,16 @@ public class GenshinRecommendTeamController extends BaseController
     @Autowired
     private IGenshinRecommendTeamService genshinRecommendTeamService;
 
+    @Autowired
+    private IGenshinCharacterService genshinCharacterService;
+
     @RequiresPermissions("system:team:view")
     @GetMapping()
-    public String team()
+    public String team(ModelMap mmap)
     {
+        // 查询所有角色列表用于下拉选择
+        List<GenshinCharacter> characterList = genshinCharacterService.selectGenshinCharacterList(new GenshinCharacter());
+        mmap.put("characterList", characterList);
         return prefix + "/team";
     }
 
@@ -73,8 +81,11 @@ public class GenshinRecommendTeamController extends BaseController
      */
     @RequiresPermissions("system:team:add")
     @GetMapping("/add")
-    public String add()
+    public String add(ModelMap mmap)
     {
+        // 查询所有角色列表用于下拉选择
+        List<GenshinCharacter> characterList = genshinCharacterService.selectGenshinCharacterList(new GenshinCharacter());
+        mmap.put("characterList", characterList);
         return prefix + "/add";
     }
 
@@ -99,6 +110,9 @@ public class GenshinRecommendTeamController extends BaseController
     {
         GenshinRecommendTeam genshinRecommendTeam = genshinRecommendTeamService.selectGenshinRecommendTeamById(id);
         mmap.put("genshinRecommendTeam", genshinRecommendTeam);
+        // 查询所有角色列表用于下拉选择
+        List<GenshinCharacter> characterList = genshinCharacterService.selectGenshinCharacterList(new GenshinCharacter());
+        mmap.put("characterList", characterList);
         return prefix + "/edit";
     }
 

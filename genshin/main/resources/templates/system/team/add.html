@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
-    <th:block th:include="include :: header('新增【请填写功能名称】')" />
+    <th:block th:include="include :: header('新增配队推荐')" />
 </head>
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
@@ -16,33 +16,41 @@
             </div>
             <div class="col-xs-12">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label is-required">1号位角色ID(主C)：</label>
+                    <label class="col-sm-3 control-label is-required">1号位角色(主C)：</label>
                     <div class="col-sm-8">
-                        <input name="char1Id" class="form-control" type="text" required>
+                        <select name="char1Id" class="form-control" required>
+                            <option value="">请选择角色</option>
+                        </select>
                     </div>
                 </div>
             </div>
             <div class="col-xs-12">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">2号位角色ID(副C)：</label>
+                    <label class="col-sm-3 control-label">2号位角色(副C)：</label>
                     <div class="col-sm-8">
-                        <input name="char2Id" class="form-control" type="text">
+                        <select name="char2Id" class="form-control">
+                            <option value="">请选择角色</option>
+                        </select>
                     </div>
                 </div>
             </div>
             <div class="col-xs-12">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">3号位角色ID(增伤/辅助)：</label>
+                    <label class="col-sm-3 control-label">3号位角色(增伤/辅助)：</label>
                     <div class="col-sm-8">
-                        <input name="char3Id" class="form-control" type="text">
+                        <select name="char3Id" class="form-control">
+                            <option value="">请选择角色</option>
+                        </select>
                     </div>
                 </div>
             </div>
             <div class="col-xs-12">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">4号位角色ID(生存/盾奶)：</label>
+                    <label class="col-sm-3 control-label">4号位角色(生存/盾奶)：</label>
                     <div class="col-sm-8">
-                        <input name="char4Id" class="form-control" type="text">
+                        <select name="char4Id" class="form-control">
+                            <option value="">请选择角色</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -66,7 +74,27 @@
     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
-        var prefix = ctx + "system/team"
+        var prefix = ctx + "system/team";
+        
+        // 加载角色列表
+        $.ajax({
+            url: ctx + "system/character/list",
+            type: "post",
+            data: {pageNum: 1, pageSize: 1000},
+            success: function(result) {
+                if (result.code == 0) {
+                    var characterData = result.rows;
+                    var selects = ['char1Id', 'char2Id', 'char3Id', 'char4Id'];
+                    selects.forEach(function(selectName) {
+                        var select = $('select[name="' + selectName + '"]');
+                        characterData.forEach(function(char) {
+                            select.append('<option value="' + char.id + '">' + char.name + '</option>');
+                        });
+                    });
+                }
+            }
+        });
+        
         $("#form-team-add").validate({
             focusCleanup: true
         });

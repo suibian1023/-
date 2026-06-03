@@ -15,20 +15,28 @@
                                 <input type="text" name="teamName"/>
                             </li>
                             <li>
-                                <label>1号位角色ID(主C)：</label>
-                                <input type="text" name="char1Id"/>
+                                <label>1号位角色(主C)：</label>
+                                <select name="char1Id">
+                                    <option value="">所有</option>
+                                </select>
                             </li>
                             <li>
-                                <label>2号位角色ID(副C)：</label>
-                                <input type="text" name="char2Id"/>
+                                <label>2号位角色(副C)：</label>
+                                <select name="char2Id">
+                                    <option value="">所有</option>
+                                </select>
                             </li>
                             <li>
-                                <label>3号位角色ID(增伤/辅助)：</label>
-                                <input type="text" name="char3Id"/>
+                                <label>3号位角色(增伤/辅助)：</label>
+                                <select name="char3Id">
+                                    <option value="">所有</option>
+                                </select>
                             </li>
                             <li>
-                                <label>4号位角色ID(生存/盾奶)：</label>
-                                <input type="text" name="char4Id"/>
+                                <label>4号位角色(生存/盾奶)：</label>
+                                <select name="char4Id">
+                                    <option value="">所有</option>
+                                </select>
                             </li>
                             <li>
                                 <label>元素共鸣效果：</label>
@@ -67,6 +75,43 @@
         var editFlag = [[${@permission.hasPermi('system:team:edit')}]];
         var removeFlag = [[${@permission.hasPermi('system:team:remove')}]];
         var prefix = ctx + "system/team";
+        var characterData = [];
+
+        // 加载角色列表
+        function loadCharacters() {
+            $.ajax({
+                url: ctx + "system/character/list",
+                type: "post",
+                data: {pageNum: 1, pageSize: 1000},
+                success: function(result) {
+                    if (result.code == 0) {
+                        characterData = result.rows;
+                        initCharacterSelects();
+                        // 角色数据加载完成后，刷新表格显示
+                        $('#bootstrap-table').bootstrapTable('refresh');
+                    }
+                }
+            });
+        }
+
+        // 初始化角色下拉框
+        function initCharacterSelects() {
+            var selects = ['char1Id', 'char2Id', 'char3Id', 'char4Id'];
+            selects.forEach(function(selectName) {
+                var select = $('select[name="' + selectName + '"]');
+                characterData.forEach(function(char) {
+                    select.append('<option value="' + char.id + '">' + char.name + '</option>');
+                });
+            });
+        }
+
+        // 根据角色ID获取角色名称
+        function getCharacterName(charId) {
+            if (!charId) return '-';
+            if (characterData.length === 0) return charId; // 如果角色数据未加载，直接显示ID
+            var char = characterData.find(function(c) { return c.id == charId; });
+            return char ? char.name : charId;
+        }
 
         $(function() {
             var options = {
@@ -75,14 +120,9 @@
                 updateUrl: prefix + "/edit/{id}",
                 removeUrl: prefix + "/remove",
                 exportUrl: prefix + "/export",
-                modalName: "【请填写功能名称】",
+                modalName: "配队推荐",
                 columns: [{
                     checkbox: true
-                },
-                {
-                    field: 'id',
-                    title: '${comment}',
-                    visible: false
                 },
                 {
                     field: 'teamName',
@@ -90,19 +130,31 @@
                 },
                 {
                     field: 'char1Id',
-                    title: '1号位角色ID(主C)'
+                    title: '1号位角色(主C)',
+                    formatter: function(value, row, index) {
+                        return getCharacterName(value);
+                    }
                 },
                 {
                     field: 'char2Id',
-                    title: '2号位角色ID(副C)'
+                    title: '2号位角色(副C)',
+                    formatter: function(value, row, index) {
+                        return getCharacterName(value);
+                    }
                 },
                 {
                     field: 'char3Id',
-                    title: '3号位角色ID(增伤/辅助)'
+                    title: '3号位角色(增伤/辅助)',
+                    formatter: function(value, row, index) {
+                        return getCharacterName(value);
+                    }
                 },
                 {
                     field: 'char4Id',
-                    title: '4号位角色ID(生存/盾奶)'
+                    title: '4号位角色(生存/盾奶)',
+                    formatter: function(value, row, index) {
+                        return getCharacterName(value);
+                    }
                 },
                 {
                     field: 'teamBonus',
@@ -124,6 +176,9 @@
                 }]
             };
             $.table.init(options);
+            
+            // 表格初始化后再加载角色数据
+            loadCharacters();
         });
     </script>
 </body>
